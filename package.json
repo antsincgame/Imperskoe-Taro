@@ -1,0 +1,44 @@
+{
+  "name": "imperskoe-taro",
+  "version": "1.0.0",
+  "description": "Имперское Таро — гадание по варп-сети в сеттинге Warhammer 40,000 с поддержкой LM Studio",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "taro": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node --import tsx src/index.ts",
+    "web": "node --import tsx src/server/server.ts",
+    "web:dev": "node --import tsx --watch src/server/server.ts",
+    "web:prod": "node dist/server/server.js",
+    "dev": "node --import tsx --watch src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --import tsx --test \"tests/**/*.test.ts\"",
+    "card": "node --import tsx src/index.ts --card",
+    "models": "node --import tsx src/index.ts --models",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "warhammer-40k",
+    "tarot",
+    "таро",
+    "имперское-таро",
+    "lm-studio",
+    "llm",
+    "divination",
+    "cli",
+    "typescript"
+  ],
+  "author": "Великий хранитель Марса для Магоса Доминуса Дмитрия Орлова",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.0"
+  }
+}

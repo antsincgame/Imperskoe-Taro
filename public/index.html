@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>✠ Имперское Таро · Гадание по варп-сети</title>
+  <meta name="description" content="Имперское Таро — гадание по варп-сети в сеттинге Warhammer 40,000 с поддержкой LM Studio." />
+  <link rel="icon" href="/aquila.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="emblem" aria-hidden="true">
+      <!-- Имперская Аквила (стилизованная двуглавая) -->
+      <svg viewBox="0 0 120 120" class="aquila">
+        <defs>
+          <radialGradient id="halo" cx="50%" cy="42%" r="55%">
+            <stop offset="0%" stop-color="#3a2f12" />
+            <stop offset="100%" stop-color="transparent" />
+          </radialGradient>
+        </defs>
+        <circle cx="60" cy="56" r="52" fill="url(#halo)" />
+        <g fill="currentColor">
+          <!-- крылья (зеркально) -->
+          <path d="M60 58 L20 40 L34 50 L18 50 L36 60 L20 62 L40 70 L26 74 L60 78 Z" />
+          <path d="M60 58 L100 40 L86 50 L102 50 L84 60 L100 62 L80 70 L94 74 L60 78 Z" />
+          <!-- тело -->
+          <path d="M60 44 q8 14 6 40 q-6 8 -6 14 q0 -6 -6 -14 q-2 -26 6 -40 Z" />
+          <!-- две головы -->
+          <path d="M58 46 q-3 -10 -12 -12 q6 -2 9 2 q1 -4 5 -4 q-3 6 -2 14 Z" />
+          <path d="M62 46 q3 -10 12 -12 q-6 -2 -9 2 q-1 -4 -5 -4 q3 6 2 14 Z" />
+          <!-- хвост -->
+          <path d="M54 96 L60 86 L66 96 L60 92 Z" />
+        </g>
+      </svg>
+    </div>
+    <div class="title-block">
+      <h1 class="site-title">Имперское&nbsp;Таро</h1>
+      <p class="site-subtitle">Гадание по варп-сети · <span class="wh">Warhammer 40,000</span></p>
+      <p class="site-motto">«Знание — оружие. Владей им мудро.»</p>
+    </div>
+    <div class="status-chip" id="lmStatus" title="Состояние LM Studio">
+      <span class="dot" id="lmDot"></span>
+      <span id="lmText">Проверка LM Studio…</span>
+    </div>
+  </header>
+
+  <nav class="toolbar">
+    <button class="link-btn" id="openRules" type="button">📜 Правила варп-сети</button>
+    <button class="link-btn" id="openCodex" type="button">🃏 Кодекс карт</button>
+    <button class="link-btn" id="recheckLm" type="button">⟳ Проверить LM Studio</button>
+  </nav>
+
+  <main class="layout">
+    <!-- Панель вопрошания -->
+    <section class="panel ask-panel">
+      <h2 class="panel-title">✠ Вопрошание</h2>
+
+      <label class="field-label" for="question">Вопрос к варпу</label>
+      <textarea id="question" class="question-input" rows="3"
+        placeholder="Например: «Ждать ли мне повышения в Адептус Механикус?» (можно оставить пустым — для знамения общего течения судьбы)"></textarea>
+
+      <label class="field-label" for="spread">Расклад</label>
+      <div class="spread-grid" id="spreadGrid"><!-- наполняется JS --></div>
+
+      <details class="advanced">
+        <summary>Дополнительно</summary>
+        <div class="advanced-body">
+          <label class="field-label" for="seed">Зерно (для воспроизводимого гадания)</label>
+          <input id="seed" class="text-input" type="text" placeholder="напр. terra-42 (необязательно)" />
+          <label class="checkbox">
+            <input type="checkbox" id="offline" />
+            <span>Офлайн-режим (не обращаться к LM Studio)</span>
+          </label>
+        </div>
+      </details>
+
+      <button class="cast-btn" id="castBtn" type="button">
+        <span class="cast-glyph">☼</span> Вопросить варп
+      </button>
+    </section>
+
+    <!-- Результат -->
+    <section class="panel result-panel" id="resultPanel" hidden>
+      <div class="spread-header" id="spreadHeader"></div>
+
+      <div class="turbulence" id="turbulence" hidden>
+        <div class="turb-label">
+          <span>Турбулентность варпа</span>
+          <span id="turbPct">0%</span>
+        </div>
+        <div class="turb-track"><div class="turb-fill" id="turbFill"></div></div>
+        <p class="turb-omen" id="turbOmen"></p>
+      </div>
+
+      <div class="cards" id="cards"><!-- карты --></div>
+
+      <div class="interpretation" id="interpretation" hidden>
+        <h3 class="interp-title">☼ Слово Астропата-Прорицателя</h3>
+        <div class="vox" id="vox"></div>
+        <div class="interp-source" id="interpSource"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Сей когитатор создан Великим хранителем Марса по прошению Магоса Доминуса. ✠</p>
+    <p class="dim">Локально. Никакого платного API. Колода и логика — внутри.</p>
+  </footer>
+
+  <!-- Модальное окно: Правила -->
+  <div class="modal" id="rulesModal" hidden>
+    <div class="modal-card">
+      <button class="modal-close" data-close type="button">✕</button>
+      <h2 class="modal-title">📜 Правила гадания в варп-сети</h2>
+      <p class="modal-sub" id="rulesPreamble"></p>
+      <div class="rules-list" id="rulesList"></div>
+    </div>
+  </div>
+
+  <!-- Модальное окно: Кодекс карт -->
+  <div class="modal" id="codexModal" hidden>
+    <div class="modal-card wide">
+      <button class="modal-close" data-close type="button">✕</button>
+      <h2 class="modal-title">🃏 Кодекс карт</h2>
+      <div class="codex-filters" id="codexFilters"></div>
+      <div class="codex-grid" id="codexGrid"></div>
+      <div class="codex-detail" id="codexDetail" hidden></div>
+    </div>
+  </div>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

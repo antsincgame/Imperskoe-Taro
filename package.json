@@ -13,6 +13,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "start": "node --import tsx src/index.ts",
+    "web": "node --import tsx src/server/server.ts",
+    "web:dev": "node --import tsx --watch src/server/server.ts",
+    "web:prod": "node dist/server/server.js",
     "dev": "node --import tsx --watch src/index.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --import tsx --test \"tests/**/*.test.ts\"",
